@@ -175,7 +175,7 @@ class DatabaseService {
       this.db.all(`
         SELECT f.name, f.message, f.rating, f.created_at, u.first_name
         FROM feedback f
-        JOIN users u ON f.user_id = u.id
+        LEFT JOIN users u ON f.user_id = u.id
         ORDER BY f.created_at DESC
       `, (err, rows) => {
         if (err) reject(err);

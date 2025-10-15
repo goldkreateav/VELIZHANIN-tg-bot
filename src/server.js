@@ -65,9 +65,18 @@ api.post('/feedback', async (req, res) => {
     }
     
     console.log('Получен отзыв:', { name, message, rating, userId });
-    
-    // Если userId не передан, создаем анонимную запись
-    const result = await db.saveFeedback(userId || null, name, message, rating || 5);
+
+    let internalUserId = null;
+    if (userId) {
+      try {
+        const user = await db.getUserByTelegramId(userId);
+        internalUserId = user ? user.id : null;
+      } catch (_) {
+        internalUserId = null;
+      }
+    }
+
+    const result = await db.saveFeedback(internalUserId, name, message, rating || 5);
     
     console.log('Отзыв сохранен с ID:', result);
     
@@ -134,7 +143,7 @@ api.get('/stats', async (req, res) => {
 });
 
 // Mount API router
-app.use(API_BASE_PATH, api);
+app.use("/api", api);
 
 // Главная страница Mini App
 app.get('/', (req, res) => {
