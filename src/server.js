@@ -5,6 +5,7 @@ const db = require('./services/db');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const API_BASE_PATH = process.env.API_BASE_PATH || '/api';
 
 // Middleware
 app.use(cors());
@@ -12,6 +13,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
 
 // API Routes
+const api = express.Router();
 
 // Проверка здоровья сервисов
 app.get('/health', (req, res) => {
@@ -25,8 +27,15 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Public config for frontend
+app.get('/config', (req, res) => {
+  res.json({
+    apiBasePath: API_BASE_PATH
+  });
+});
+
 // Получение таблицы лидеров (JSON)
-app.get('/api/leaderboard', async (req, res) => {
+api.get('/leaderboard', async (req, res) => {
   try {
     const leaderboard = await db.getQuestLeaderboard(20);
     res.json({
@@ -44,7 +53,7 @@ app.get('/api/leaderboard', async (req, res) => {
 });
 
 // Отправка обратной связи
-app.post('/api/feedback', async (req, res) => {
+api.post('/feedback', async (req, res) => {
   try {
     const { name, message, rating, userId } = req.body;
     
@@ -77,7 +86,7 @@ app.post('/api/feedback', async (req, res) => {
 });
 
 // Получение всех отзывов
-app.get('/api/feedback', async (req, res) => {
+api.get('/feedback', async (req, res) => {
   try {
     const feedback = await db.getFeedback();
     res.json({
@@ -95,7 +104,7 @@ app.get('/api/feedback', async (req, res) => {
 });
 
 // Статистика бота
-app.get('/api/stats', async (req, res) => {
+api.get('/stats', async (req, res) => {
   try {
     const leaderboard = await db.getQuestLeaderboard(100);
     const feedback = await db.getFeedback();
@@ -123,6 +132,9 @@ app.get('/api/stats', async (req, res) => {
     });
   }
 });
+
+// Mount API router
+app.use(API_BASE_PATH, api);
 
 // Главная страница Mini App
 app.get('/', (req, res) => {

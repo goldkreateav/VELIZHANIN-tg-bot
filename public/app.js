@@ -1,6 +1,20 @@
 // Telegram Web App API
 const tg = window.Telegram.WebApp;
 
+// Конфиг API
+let API_BASE_PATH = '/api';
+async function loadConfig() {
+    try {
+        const res = await fetch('/config');
+        const cfg = await res.json();
+        if (cfg && cfg.apiBasePath) {
+            API_BASE_PATH = cfg.apiBasePath;
+        }
+    } catch (e) {
+        console.warn('Не удалось загрузить конфиг, используем /api по умолчанию');
+    }
+}
+
 // Инициализация приложения
 document.addEventListener('DOMContentLoaded', function() {
     // Инициализируем Telegram Web App
@@ -16,9 +30,11 @@ document.addEventListener('DOMContentLoaded', function() {
     document.body.style.setProperty('--tg-theme-hint-color', tg.themeParams.hint_color || '#999999');
     
     // Загружаем начальные данные
-    loadLeaderboard();
-    loadFeedback();
-    loadStats();
+    loadConfig().then(() => {
+        loadLeaderboard();
+        loadFeedback();
+        loadStats();
+    });
     
     // Настраиваем обработчики форм
     setupEventListeners();
@@ -88,7 +104,7 @@ async function loadLeaderboard() {
     content.innerHTML = '<div class="loading">Загрузка...</div>';
     
     try {
-        const response = await fetch('/api/leaderboard');
+        const response = await fetch(`${API_BASE_PATH}/leaderboard`);
         const data = await response.json();
         
         if (data.success && data.data.length > 0) {
@@ -127,7 +143,7 @@ async function loadFeedback() {
     content.innerHTML = '<div class="loading">Загрузка отзывов...</div>';
     
     try {
-        const response = await fetch('/api/feedback');
+        const response = await fetch(`${API_BASE_PATH}/feedback`);
         const data = await response.json();
         
         if (data.success && data.data.length > 0) {
@@ -166,7 +182,7 @@ async function loadStats() {
     content.innerHTML = '<div class="loading">Загрузка статистики...</div>';
     
     try {
-        const response = await fetch('/api/stats');
+        const response = await fetch(`${API_BASE_PATH}/stats`);
         const data = await response.json();
         
         if (data.success) {
@@ -236,7 +252,7 @@ async function handleFeedbackSubmit(event) {
     submitBtn.textContent = '📤 Отправка...';
     
     try {
-        const response = await fetch('/api/feedback', {
+        const response = await fetch(`${API_BASE_PATH}/feedback`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
