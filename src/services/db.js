@@ -60,11 +60,10 @@ class DatabaseService {
         CREATE TABLE IF NOT EXISTS feedback (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           user_id INTEGER,
-          name TEXT,
-          message TEXT,
-          rating INTEGER,
-          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-          FOREIGN KEY (user_id) REFERENCES users (id)
+          name TEXT NOT NULL,
+          message TEXT NOT NULL,
+          rating INTEGER DEFAULT 5,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
       `);
     });

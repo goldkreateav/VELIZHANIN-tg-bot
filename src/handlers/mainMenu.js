@@ -1,24 +1,24 @@
 const { Markup } = require('telegraf');
-const db = require('../services/db');
 
-module.exports = async (ctx) => {
+// Обработчик возврата в главное меню
+const mainMenuHandler = async (ctx) => {
   try {
+    await ctx.answerCbQuery();
+    
+    // Сбрасываем все состояния сессии
+    if (ctx.session) {
+      ctx.session.questState = null;
+      ctx.session.aiState = null;
+      ctx.session.questAnswers = null;
+      ctx.session.questQuestions = null;
+      ctx.session.questCurrentQuestion = null;
+      ctx.session.userState = 'main_menu';
+    }
+    
     const firstName = ctx.from.first_name || 'Друг';
     
-    // Сохраняем пользователя в базе данных
-    await db.createOrUpdateUser(ctx.from);
+    const welcomeMessage = `🏠 *Главное меню*\n\nПривет, ${firstName}!\n\nВыбери действие:`;
     
-    const welcomeMessage = `🎉 Привет, ${firstName}!
-
-Добро пожаловать в бота VELIZHANIN! 
-
-Здесь ты можешь:
-🎯 Пройти увлекательный квест
-🤖 Получить совет от искусственного интеллекта
-ℹ️ Узнать больше о боте
-
-Выбери действие:`;
-
     // Создаем кнопки
     const buttons = [
       [Markup.button.callback('🎯 Пройти квест', 'quest_start')],
@@ -39,17 +39,18 @@ module.exports = async (ctx) => {
     buttons.push([Markup.button.callback('ℹ️ О боте', 'about')]);
     
     const keyboard = Markup.inlineKeyboard(buttons);
-
-    await ctx.reply(welcomeMessage, keyboard);
     
-    // Сохраняем состояние пользователя
-    if (!ctx.session) {
-      ctx.session = {};
-    }
-    ctx.session.userState = 'main_menu';
+    await ctx.reply(welcomeMessage, { 
+      parse_mode: 'Markdown',
+      ...keyboard 
+    });
     
   } catch (error) {
-    console.error('Ошибка в команде /start:', error);
-    await ctx.reply('Произошла ошибка. Попробуйте команду /start еще раз.');
+    console.error('Ошибка в обработчике main_menu:', error);
+    await ctx.reply('Произошла ошибка при возврате в главное меню. Попробуйте команду /start.');
   }
+};
+
+module.exports = {
+  mainMenuHandler
 };

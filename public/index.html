@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VELIZHANIN Bot - Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🎯 VELIZHANIN Bot</h1>
+            <p>Таблица лидеров и обратная связь</p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <button class="nav-btn active" data-tab="leaderboard">🏆 Лидеры</button>
+            <button class="nav-btn" data-tab="feedback">💬 Отзывы</button>
+            <button class="nav-btn" data-tab="stats">📊 Статистика</button>
+            <button class="nav-btn" data-tab="doom">🎮 Doom</button>
+        </nav>
+
+        <!-- Leaderboard Tab -->
+        <div id="leaderboard" class="tab-content active">
+            <div class="section-header">
+                <h2>🏆 Таблица лидеров</h2>
+                <button class="refresh-btn" id="leaderboard-refresh">🔄 Обновить</button>
+            </div>
+            
+            <div id="leaderboard-content" class="leaderboard">
+                <div class="loading">Загрузка...</div>
+            </div>
+        </div>
+
+        <!-- Feedback Tab -->
+        <div id="feedback" class="tab-content">
+            <div class="section-header">
+                <h2>💬 Обратная связь</h2>
+            </div>
+            
+            <form id="feedback-form" class="feedback-form">
+                <div class="form-group">
+                    <label for="name">Ваше имя:</label>
+                    <input type="text" id="name" name="name" required placeholder="Введите ваше имя">
+                </div>
+                
+                <div class="form-group">
+                    <label for="rating">Оценка:</label>
+                    <div class="rating">
+                        <span class="star" data-rating="1">⭐</span>
+                        <span class="star" data-rating="2">⭐</span>
+                        <span class="star" data-rating="3">⭐</span>
+                        <span class="star" data-rating="4">⭐</span>
+                        <span class="star" data-rating="5">⭐</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="message">Ваше сообщение:</label>
+                    <textarea id="message" name="message" required placeholder="Поделитесь своими впечатлениями о боте..."></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn">📤 Отправить</button>
+            </form>
+            
+            <div id="feedback-list" class="feedback-list">
+                <h3>Отзывы пользователей:</h3>
+                <div id="feedback-content" class="feedback-content">
+                    <div class="loading">Загрузка отзывов...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Tab -->
+        <div id="stats" class="tab-content">
+            <div class="section-header">
+                <h2>📊 Статистика бота</h2>
+                <button class="refresh-btn" id="stats-refresh">🔄 Обновить</button>
+            </div>
+            
+            <div id="stats-content" class="stats-grid">
+                <div class="loading">Загрузка статистики...</div>
+            </div>
+        </div>
+
+        <!-- Doom Tab -->
+        <div id="doom" class="tab-content">
+            <div class="section-header">
+                <h2>🎮 Doom</h2>
+            </div>
+            <div class="iframe-wrapper">
+                <iframe class="doom-iframe" src="https://danihre.github.io/jsdoom/" title="DOOM" allowfullscreen referrerpolicy="no-referrer"></iframe>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Разработано для студии VELIZHANIN</p>
+            <button class="tg-btn" onclick="openInTelegram()">🚀 Открыть в Telegram</button>
+        </footer>
+    </div>
+
+    
+
+    <script src="app.js"></script>
+</body>
+</html>

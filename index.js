@@ -1,26 +1,42 @@
 require('dotenv').config();
 const { bot } = require('./src/bot');
+const server = require('./src/server');
 
-// Запуск бота
-async function startBot() {
+// Запуск бота и сервера
+async function startApplication() {
   try {
-    console.log('🚀 Запуск Telegram бота...');
+    console.log('🚀 Запуск приложения...');
     
-    // Запуск бота в режиме polling (для разработки)
+    // Запуск Express сервера
+    console.log('🌐 Запуск веб-сервера...');
+    // Сервер уже запускается в server.js
+    
+    // Запуск бота
+    console.log('🤖 Запуск Telegram бота...');
     await bot.launch();
     
-    console.log('✅ Бот успешно запущен!');
+    console.log('✅ Приложение успешно запущено!');
     console.log('📱 Бот готов к работе в Telegram');
+    console.log('🌐 Mini App доступен по адресу:', `http://localhost:${process.env.PORT || 3000}`);
     
     // Graceful stop
-    process.once('SIGINT', () => bot.stop('SIGINT'));
-    process.once('SIGTERM', () => bot.stop('SIGTERM'));
+    process.once('SIGINT', () => {
+      console.log('🛑 Остановка приложения...');
+      bot.stop('SIGINT');
+      process.exit(0);
+    });
+    
+    process.once('SIGTERM', () => {
+      console.log('🛑 Остановка приложения...');
+      bot.stop('SIGTERM');
+      process.exit(0);
+    });
     
   } catch (error) {
-    console.error('❌ Ошибка при запуске бота:', error);
+    console.error('❌ Ошибка при запуске приложения:', error);
     process.exit(1);
   }
 }
 
 // Запуск
-startBot();
+startApplication();
